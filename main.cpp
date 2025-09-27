@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib> 
 #include <iomanip>
+#include <cmath> // float 값을 정수와 비교하기 위해 추가
 #include "homework3.h"
 
 using namespace std;
@@ -13,23 +14,47 @@ int numOfStudent = 0;
 void printStudentList(){
    int idx = 0;
 
-   // ******************************************************
-   // 수정된 부분: std::fixed를 제거하고 std::setprecision(1)만 유지
-   // 이렇게 하면 정수 값 뒤에 강제로 .0이 붙는 것을 방지할 수 있습니다.
-   // ******************************************************
-   std::cout << std::setprecision(1); 
-
    for(idx = 0; idx < numOfStudent; ++idx){
+        float midterm = students[idx].record.midterm;
+        float final = students[idx].record.final;
+        float total = midterm + final;
+        
+        // C++의 float 비교 문제 때문에 floor()를 사용하여 정수부만 비교합니다.
+        
+        // 1. ID와 Name 출력
         std::cout << "ID: " << students[idx].id 
-                  << ",\t Name: " << students[idx].name
-                  << ",\t Midterm: " << students[idx].record.midterm 
-                  << ",\t Final: " << students[idx].record.final
-                  << ",\t Total: " << students[idx].record.midterm + students[idx].record.final << std::endl;
+                  << ",\t Name: " << students[idx].name; 
+        
+        // 2. Midterm 출력: 정수일 경우 .0 생략, 소수점일 경우 1자리 출력
+        std::cout << ",\t Midterm: ";
+        if (midterm == floor(midterm)) {
+            std::cout << (int)midterm; // 정수 출력 (예: 91)
+        } else {
+            std::cout << std::fixed << std::setprecision(1) << midterm; // 소수점 출력 (예: 90.7)
+        }
+        
+        // 3. Final 출력: 정수일 경우 .0 생략, 소수점일 경우 1자리 출력
+        std::cout << ",\t Final: ";
+        if (final == floor(final)) {
+            std::cout << (int)final; // 정수 출력 (예: 91)
+        } else {
+            std::cout << std::fixed << std::setprecision(1) << final; // 소수점 출력 (예: 91.3)
+        }
+        
+        // 4. Total 출력: 정수일 경우 .0 생략, 소수점일 경우 1자리 출력
+        std::cout << ",\t Total: ";
+        if (total == floor(total)) {
+            std::cout << (int)total; // 정수 출력 (예: 157)
+        } else {
+            std::cout << std::fixed << std::setprecision(1) << total; // 소수점 출력 (예: 181.7)
+        }
+        
+        std::cout << std::endl;
+        
+        // 모든 출력 설정 초기화 (다음 반복에 영향 없도록)
+        std::cout.unsetf(std::ios_base::floatfield);
+        std::cout << std::setprecision(6);
    }
-   
-   // 출력 상태를 복원
-   std::cout.unsetf(std::ios_base::floatfield); // fixed가 없으니 setprecision만 복원
-   std::cout << std::setprecision(6); 
    
    cout << "---------------------------" << endl;
 }
@@ -49,21 +74,21 @@ struct SortByName{
 };
 
 struct SortByMidterm{
-    // 내림차순 정렬: a > b 일 때 true
+    // 내림차순 정렬
     bool operator()(const StudentStruct& a, const StudentStruct& b) const{
         return a.record.midterm > b.record.midterm;
     }
 };
 
 struct SortByFinal{
-    // 내림차순 정렬: a > b 일 때 true
+    // 내림차순 정렬
     bool operator()(const StudentStruct& a, const StudentStruct& b) const{
         return a.record.final > b.record.final;
     }
 };
 
 struct SortByTotal{
-    // 내림차순 정렬: a > b 일 때 true
+    // 내림차순 정렬
     bool operator()(const StudentStruct& a, const StudentStruct& b) const{
         return (a.record.midterm + a.record.final) > (b.record.midterm + b.record.final);
     }
@@ -133,8 +158,7 @@ void doTest2(){
 
     cout << " Sort by Total" << endl;
     auto sortByTotal = [](const StudentStruct &a, const StudentStruct &b) -> bool {
-        // 이 부분은 이미 이전 질문에서 b.record.final이 아닌 b.record.midterm + b.record.final로 수정해야 할 로직이 포함되어 있습니다.
-        // 현재 코드는 이전 답변에서 수정되었던 Total 비교 로직을 유지합니다.
+        // [BUG FIX]: b.record.final이 아니라 b.record.midterm + b.record.final로 수정되었습니다.
         return (a.record.midterm + a.record.final) > (b.record.midterm + b.record.final);
     };
     std::sort(students, students + numOfStudent, sortByTotal);
