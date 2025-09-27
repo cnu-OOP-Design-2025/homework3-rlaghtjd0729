@@ -1,9 +1,11 @@
+// homework3.cpp
 #include <iostream>
 #include <string>
 #include "homework3.h"
 
 /* FIXME: parameter numOfStudent를 reference 타입으로 바꿔보기 */
-void fillStudentRecord(StudentStruct *students, int *numOfStudent) {
+// int* 에서 int& 로 변경
+void fillStudentRecord(StudentStruct *students, int& numOfStudent) {
     addStudent(students, numOfStudent, "Alice", 1001, 90.7, 91.0);
     addStudent(students, numOfStudent, "Bob", 1002, 68.5, 74.8);
     addStudent(students, numOfStudent, "Charlie", 1003, 84.2, 72.8);
@@ -54,8 +56,8 @@ void fillStudentRecord(StudentStruct *students, int *numOfStudent) {
     addStudent(students, numOfStudent, "Vince", 1048, 65.1, 89.8);
     addStudent(students, numOfStudent, "Will", 1049, 66.9, 67.4);
     addStudent(students, numOfStudent, "Zoe", 1050, 78.1, 76.0);
-
 }
+
 /* Return Index */
 int findStudentByStudentID(StudentStruct* students, int numOfStudent, int id) {
     for (int i =0; i < numOfStudent; i++) {
@@ -63,15 +65,13 @@ int findStudentByStudentID(StudentStruct* students, int numOfStudent, int id) {
     }    
     return -1;
 }
+
 /* FIXME: parameter numOfStudent를 reference 타입으로 바꿔보기 */
-void addStudent(StudentStruct *students, int *numOfStudent, const char* name, int id, float midterm, float final) {
-    int idx = findStudentByStudentID(students, *numOfStudent, id);
+// int* 에서 int& 로 변경하고, 내부에서 *numOfStudent 대신 numOfStudent 사용
+void addStudent(StudentStruct *students, int& numOfStudent, const char* name, int id, float midterm, float final) {
+    int idx = findStudentByStudentID(students, numOfStudent, id);
     if (idx < 0) {
-        students[*numOfStudent] = StudentStruct(name, id, midterm, final);
-        ++(*numOfStudent);        
+        students[numOfStudent] = StudentStruct(name, id, midterm, final);
+        ++numOfStudent; // 포인터 해제(*) 없이 바로 증가
     }    
 }
-
-
-
-

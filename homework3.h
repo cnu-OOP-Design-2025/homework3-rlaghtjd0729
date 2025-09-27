@@ -1,4 +1,4 @@
-//homework3.h
+// homework3.h
 #pragma once
 
 #include <string>
@@ -16,7 +16,11 @@ struct StudentStruct {
     struct StudentRecord record;
     StudentStruct() : name(""), id(-1), record(0.0f, 0.0f) {}
     StudentStruct (const char *name, int id, float midterm, float final): name(name), id(id), record(midterm, final) {}
+    
+    float total() const { return record.midterm + record.final; }
 };
-void fillStudentRecord(StudentStruct *students, int *numbOfStudent);
-void addStudent(StudentStruct *students, int *numOfStudent, const char* name, int id, float midterm, float final);
+
+// FIXME: parameter numOfStudent를 reference 타입으로 변경
+void fillStudentRecord(StudentStruct *students, int& numOfStudent); 
+void addStudent(StudentStruct *students, int& numOfStudent, const char* name, int id, float midterm, float final);
 int findStudentByStudentID(StudentStruct* students, int numOfStudent, int id);
